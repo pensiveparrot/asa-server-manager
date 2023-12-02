@@ -67,6 +67,11 @@ public class DockerManager {
         executeCommand(command);
     }
 
+    public void removeServerFile(String remoteFilePath, String password) throws JSchException, IOException {
+        String command = "rm -rf " + remoteFilePath;
+        executeSudoCommand(command, password);
+    }
+
     public void editFileInDockerContainer(String containerId, String remoteFilePath)
             throws JSchException, IOException, SftpException {
         String localFilePath = System.getProperty("user.dir") + File.separator + new File(remoteFilePath).getName();
@@ -279,7 +284,7 @@ public class DockerManager {
         System.out.println("Password: " + PASSWORD);
         System.out.println("Hostname: " + HOST);
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter action (restart/logs/edit/stop/start): ");
+        System.out.print("Enter action (restart/logs/edit/stop/start/wipe): ");
         String action = scanner.nextLine();
         DockerManager manager = new DockerManager();
 
@@ -319,6 +324,8 @@ public class DockerManager {
                 manager.stopDockerContainerById(CONTAINERID);
             } else if (action.equalsIgnoreCase("start")) {
                 manager.startDockerContainer(CONTAINERID);
+            } else if (action.equalsIgnoreCase("wipe")) {
+                manager.removeServerFile("/home/" + USERNAME + "/ASA/Saved/SavedArks/TheIsland_WP", PASSWORD);
             } else {
                 System.out.println("Invalid action.");
             }
